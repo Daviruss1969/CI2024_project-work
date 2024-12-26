@@ -4,6 +4,7 @@ import numbers
 import random
 import gp
 
+SELECT_NODE_PROBABILITY = .3
 
 valueType = str | int | np.ufunc | None
 
@@ -63,7 +64,7 @@ class Node:
         return 1 + max(len(self.successors[0]), len(self.successors[1]))
 
     def get_random_subtree(self) -> 'Node':
-        if len(self.__successors) == 0 or random.random() < .3:
+        if len(self.__successors) == 0 or random.random() < SELECT_NODE_PROBABILITY:
             return self
         
         next_index = random.choice(range(len(self.__successors)))
@@ -73,7 +74,7 @@ class Node:
     def set_random_subtree(self, node: 'Node', leaf: bool = False) -> None:
         next_index = random.choice(range(len(self.__successors)))
 
-        if (not leaf and random.random() < .3) or len(self.__successors[next_index].__successors) == 0:
+        if (not leaf and random.random() < SELECT_NODE_PROBABILITY) or len(self.__successors[next_index].__successors) == 0:
             self.__successors[next_index] = node
             return
         
@@ -81,11 +82,13 @@ class Node:
         
     def set_random_operator(self, operators: list[np.ufunc]) -> None:
         next_index = random.choice(range(len(self.__successors)))
-        if (random.random() < .3) or len(self.__successors[next_index].__successors) == 0:
-            available_operators = [operator for operator in operators if operator.nin == self.arity]
-            operator = random.choice(available_operators)
+
+        if (random.random() < SELECT_NODE_PROBABILITY) or len(self.__successors[next_index].__successors) == 0:
+            operator = random.choice([operator for operator in operators if operator.nin == self.arity])
+
             def _f(*_args, **_kwargs):
                 return operator(*_args)
+
             self.__func = _f
             return
         

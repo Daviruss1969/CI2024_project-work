@@ -3,6 +3,14 @@ import gp
 import random
 from copy import deepcopy
 
+TOURNAMENT_SELECTION_SIZE = 3
+
+MUTATION_PROBABILITY = 0.5
+LEAF_MUTATION_PROBABILITY = 0.5
+
+CONSTANT_PROBABILITY = 0.3
+CONSTANT_RANGE = 10
+
 class Symreg_gp:
     _operators: list[np.ufunc]
     _variables: list[str]
@@ -51,11 +59,11 @@ class Symreg_gp:
             mean_square_errors.append(individual.compute_fitness_mse(self._ground_truth))
 
         for _ in range(self._offspring_size):
-            parent1 = self._tournament_selection(3)
-            parent2 = self._tournament_selection(3)
+            parent1 = self._tournament_selection(TOURNAMENT_SELECTION_SIZE)
+            parent2 = self._tournament_selection(TOURNAMENT_SELECTION_SIZE)
             new_individual = self._subtree_crossover(parent1, parent2)
-            if random.random() < .5:
-                if random.random() < .5:
+            if random.random() < MUTATION_PROBABILITY:
+                if random.random() < LEAF_MUTATION_PROBABILITY:
                     new_individual = self._leaf_mutation(new_individual)
                 else:
                     new_individual = self._operator_mutation(new_individual)
@@ -137,17 +145,13 @@ class Symreg_gp:
 
     def _create_leaf(self) -> gp.Node:
         """Create a leaf, either a const or a variable"""
-        if random.random() < 0.3:
-            return gp.Node(random.uniform(-10, 10))
+        if random.random() < CONSTANT_PROBABILITY:
+            return gp.Node(random.uniform(-CONSTANT_RANGE, CONSTANT_RANGE))
         else:
             return gp.Node(random.choice(self._variables))
     
     def train(self, train: bool):
         self._train = train
-
-    def toNumPyFile(self, path: str):
-        """Write the fitest individual into a NumPy file"""
-        pass
 
     @staticmethod
     def formated_variable(i: int) -> str:

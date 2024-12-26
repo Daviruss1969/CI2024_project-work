@@ -2,6 +2,10 @@ import gp
 import numpy as np
 import math
 
+LEN_TREE_WEIGHT = 5
+
+VALUE_NAN_NUMBER = 1e6
+
 class Individual:
     _tree: gp.Node
     _fitness: float
@@ -16,8 +20,8 @@ class Individual:
 
     def compute_fitness_mse(self, ground_truth: np.ndarray[float]) -> float:
         mse: float = 100*np.square(ground_truth-self._predictions).sum()/len(ground_truth)
-        mse = (1e6 if math.isnan(mse) else mse)
-        self._fitness = -(mse + (len(self.tree) * 5))
+        mse = (VALUE_NAN_NUMBER if math.isnan(mse) else mse)
+        self._fitness = -(mse + (len(self.tree) * LEN_TREE_WEIGHT))
         return mse
 
     def add_predictions(self, predictions: list[float]):
