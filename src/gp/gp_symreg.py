@@ -59,8 +59,6 @@ class Symreg_gp:
                     new_individual = self._leaf_mutation(new_individual)
                 else:
                     new_individual = self._operator_mutation(new_individual)
-                # else:
-                #     new_individual = self._random_mutation(new_individual)
 
             offspring.append(new_individual)
         
@@ -179,9 +177,9 @@ class Symreg_gp:
                 # Try/catch => to discard functions that cannot handle floats as input
                 try:
                     # Get the result type of the function and add it if it's not already there (because of numpy aliases, there can be multiple times the same function)
-                    # I also have to discard matmul and vecdot since they work only on vectors and not scalars
+                    # I also have to discard some functions since they work only on vectors and not scalars
                     result_type = obj.resolve_dtypes(dtypes)[-1]
-                    if result_type == np.float32 and obj not in funcs and obj != np.matmul and obj != np.vecdot:
+                    if result_type == np.float32 and obj not in funcs and obj != np.matmul and obj != np.vecdot and obj != np.vecmat and obj != np.matvec:
                         funcs.append(obj)
                 except:
                     continue
