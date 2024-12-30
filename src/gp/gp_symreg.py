@@ -3,13 +3,16 @@ import gp
 import random
 from copy import deepcopy
 
-TOURNAMENT_SELECTION_SIZE = 3
+TOURNAMENT_SELECTION_SIZE = 4
 
-MUTATION_PROBABILITY = 0.5
-LEAF_MUTATION_PROBABILITY = 0.5
+MUTATION_PROBABILITY = .5
+LEAF_MUTATION_PROBABILITY = .4
+OPERATOR_MUTATION_PROBABILITY = .4
 
-CONSTANT_PROBABILITY = 0.3
+CONSTANT_PROBABILITY = .3
 CONSTANT_RANGE = 10
+
+MAX_TREE_SIZE = 30
 
 class Symreg_gp:
     _operators: list[np.ufunc]
@@ -19,24 +22,25 @@ class Symreg_gp:
     _ground_truth: np.ndarray[float]
     _population_size: int
     _offspring_size: int
-    _max_depth: int
+    _initial_max_depth: int
 
 
-    def __init__(self, input_size: int, ground_truth: np.ndarray[float], population_size: int, offspring_size: int, max_depth: int):
+    def __init__(self, input_size: int, ground_truth: np.ndarray[float], population_size: int, offspring_size: int, initial_max_depth: int):
         self._operators = Symreg_gp.get_valid_ufuncs()
         self._variables = [Symreg_gp.formated_variable(i) for i in range(input_size)]
         self._train = False
         self._population_size = population_size
         self._offspring_size = offspring_size
         self._ground_truth = ground_truth
-        self._max_depth = max_depth
+        self._initial_max_depth = initial_max_depth
         self._population = []
 
         # Init population
         for _ in range(self._population_size):
             # Generate random tree
-            tree = self._generate_random_tree(self._max_depth)
+            tree = self._generate_random_tree(self._initial_max_depth)
             individual = gp.Individual(tree)
+            individual.len_tree = len(tree)
             self._population.append(individual)
 
     def __call__(self, inputs: np.ndarray[float]) -> np.ndarray[float]:
@@ -49,14 +53,14 @@ class Symreg_gp:
         mean_square_errors: list[float] = list()
         offspring: list[gp.Individual] = list()
 
+        for individual in self._population:
+            mean_square_errors.append(individual.compute_fitness_mse(self._ground_truth))
+
         self._population.sort(key=lambda l: l.fitness, reverse=True)
         self._population = self._population[:self._population_size]
 
         if (draw_fittest):
             self._population[0].tree.draw()
-
-        for individual in self._population:
-            mean_square_errors.append(individual.compute_fitness_mse(self._ground_truth))
 
         for _ in range(self._offspring_size):
             parent1 = self._tournament_selection(TOURNAMENT_SELECTION_SIZE)
@@ -65,26 +69,32 @@ class Symreg_gp:
             if random.random() < MUTATION_PROBABILITY:
                 if random.random() < LEAF_MUTATION_PROBABILITY:
                     new_individual = self._leaf_mutation(new_individual)
-                else:
+                elif random.random() < OPERATOR_MUTATION_PROBABILITY:
                     new_individual = self._operator_mutation(new_individual)
+                else:
+                    new_individual = self._random_mutation(new_individual)
 
-            offspring.append(new_individual)
+            new_individual.len_tree = len(new_individual.tree)
+            if (new_individual.len_tree < MAX_TREE_SIZE):
+                offspring.append(new_individual)
         
         offspring.append(self._population[0]) # Append the fittest individual from last generation (elitist strategies)
         self._population = offspring
 
         return mean_square_errors
 
-    def _train_call(self, inputs):
+    def _train_call(self, inputs: np.ndarray):
+        # For each individual
         for individual in self._population:
-            predictions = [
-                individual.tree(**{n: v for n, v in zip(self._variables, row)}) 
-                for row in inputs
-            ]
+            # Get predictions for each inputs
+            predictions = np.apply_along_axis(
+                lambda row: individual.tree(**{n: v for n, v in zip(self._variables, row)}),
+                axis=1,
+                arr=inputs
+            )
 
+            # Add the predictions to the individual
             individual.add_predictions(predictions)
-
-        return
 
     def _inference_call(self, inputs) -> np.ndarray[float]:
         Y_pred: list[float] = list()
@@ -100,7 +110,7 @@ class Symreg_gp:
     
     def _random_mutation(self, individual: gp.Individual) -> gp.Individual:
         child = deepcopy(individual.tree)
-        child.set_random_subtree(self._generate_random_tree(2))
+        child.set_random_subtree(self._generate_random_tree(self._initial_max_depth))
         return gp.Individual(child)
     
     def _leaf_mutation(self, individual: gp.Individual) -> gp.Individual:

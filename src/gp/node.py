@@ -4,7 +4,7 @@ import numbers
 import random
 import gp
 
-SELECT_NODE_PROBABILITY = .3
+SELECT_NODE_PROBABILITY = .2
 
 valueType = str | int | np.ufunc | None
 

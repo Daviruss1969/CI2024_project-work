@@ -1,30 +1,51 @@
 import gp
 import numpy as np
-import math
 
-LEN_TREE_WEIGHT = 5
+LEN_TREE_WEIGHT = 0
+NAN_PRED_WEIGHT = 0.1
 
-VALUE_NAN_NUMBER = 1e6
+VALUE_NAN_NUMBER = np.inf
 
 class Individual:
     _tree: gp.Node
     _fitness: float
-    _predictions: list[float]
+    _predictions: np.ndarray[float]
+    _len_tree: int
 
     def __init__(self, tree: gp.Node | None, fitness: float = -np.inf):
         self._fitness = fitness
+        self._len_tree = 0
         if tree:
             self._tree = tree
         else:
             self._tree = None
 
     def compute_fitness_mse(self, ground_truth: np.ndarray[float]) -> float:
-        mse: float = 100*np.square(ground_truth-self._predictions).sum()/len(ground_truth)
-        mse = (VALUE_NAN_NUMBER if math.isnan(mse) else mse)
-        self._fitness = -(mse + (len(self.tree) * LEN_TREE_WEIGHT))
+        # Mask of boolean to get the valid prediction
+        valid_mask = ~np.isnan(self._predictions)
+
+        # Huge fitness if no values can be computed
+        if not valid_mask.any():
+            self._fitness = -VALUE_NAN_NUMBER
+            return VALUE_NAN_NUMBER
+        
+        # Compute MSE with only valid predictions
+        valid_ground_truth = ground_truth[valid_mask]
+        valid_predictions = self._predictions[valid_mask]
+        mse: float = 100 * np.square(valid_ground_truth - valid_predictions).sum() / len(valid_ground_truth)
+
+        # Compute penalty for NaN
+        nan_penalty = (~valid_mask).sum() * NAN_PRED_WEIGHT
+
+        # Compute penalty for length of the tree
+        len_tree_penalty = self._len_tree * LEN_TREE_WEIGHT
+        
+        # Compute final fitness
+        self._fitness = -(mse + len_tree_penalty + nan_penalty)
+        
         return mse
 
-    def add_predictions(self, predictions: list[float]):
+    def add_predictions(self, predictions: np.ndarray[float]):
         self._predictions = predictions
         return
 
@@ -39,3 +60,11 @@ class Individual:
     @property
     def fitness(self) -> float:
         return self._fitness
+    
+    @property
+    def len_tree(self) -> int:
+        return self._len_tree
+    
+    @len_tree.setter
+    def len_tree(self, length: int):
+        self._len_tree = length
