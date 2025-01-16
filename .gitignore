@@ -1,4 +1,7 @@
-poetry.lock
-pyproject.toml
-
 src/gp/__pycache__
+
+result/
+
+__pycache__
+
+test.py

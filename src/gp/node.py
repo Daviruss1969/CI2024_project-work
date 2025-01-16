@@ -4,7 +4,7 @@ import numbers
 import random
 import gp
 
-SELECT_NODE_PROBABILITY = .2
+SELECT_NODE_PROBABILITY = .3
 
 valueType = str | int | np.ufunc | None
 
@@ -90,10 +90,17 @@ class Node:
                 return operator(*_args)
 
             self.__func = _f
+            self.__str = operator.__name__
             return
         
         self.__successors[next_index].set_random_operator(operators)
 
+    def to_numpy(self):
+        if self.is_leaf:
+            return self.__str
+        else:
+            args = [child.to_numpy() for child in self.__successors]
+            return f"np.{self.__str}({', '.join(args)})"
         
     
     @property

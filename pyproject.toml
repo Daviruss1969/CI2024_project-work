@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "ci2024-project-work"
+version = "0.1.0"
+description = ""
+authors = ["Daviruss1969 <lukasloiodic@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+tqdm = "^4.67.1"
+numpy = "2.2.1"
+ipykernel = "^6.29.5"
+graphviz = "^0.20.3"
+matplotlib = "^3.10.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
