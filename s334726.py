@@ -8,7 +8,7 @@ def f1(x: np.ndarray) -> np.ndarray:
     return np.sin(x[0])
 
 def f2(x: np.ndarray) -> np.ndarray:
-    raise Exception("not implemented")
+    return np.fmin(np.subtract(np.minimum(np.add(np.multiply(np.maximum(x[0], x[0]), np.add(np.multiply(np.arctan(x[0]), 3.22049e+06), np.rad2deg(np.degrees(np.copysign(np.expm1(x[2]), np.exp2(np.tanh(x[1]))))))), np.multiply(3.87096e+06, np.cbrt(np.ceil(np.positive(x[1]))))), np.add(np.add(np.multiply(np.arctan(x[0]), 3.22049e+06), np.rad2deg(np.degrees(np.hypot(x[0], np.exp2(x[2]))))), np.rad2deg(np.degrees(np.nextafter(np.expm1(x[1]), -3.90945e+06))))), np.floor(np.floor(np.nextafter(np.floor(np.floor(np.nextafter(np.floor(np.nextafter(-753385, x[0])), x[0]))), x[0])))), np.logaddexp2(np.add(np.multiply(np.maximum(x[0], x[2]), np.add(np.multiply(np.arctan(x[0]), 3.22049e+06), np.rad2deg(np.degrees(np.copysign(np.expm1(x[2]), np.exp2(np.tanh(np.fmin(x[2], x[1])))))))), np.multiply(3.87096e+06, x[2])), np.multiply(3.87096e+06, np.cbrt(x[1]))))
 
 def f3(x: np.ndarray) -> np.ndarray:
     return np.subtract(np.logaddexp(np.add(np.square(x[0]), np.subtract(np.logaddexp2(np.logaddexp2(np.remainder(np.tanh(np.radians(x[1])), np.absolute(np.remainder(np.sinh(x[0]), np.absolute(-28.7677)))), np.remainder(x[2], x[2])), np.remainder(np.tanh(np.rint(x[1])), np.logaddexp(np.fabs(np.multiply(np.logaddexp(x[1], x[1]), np.remainder(np.positive(x[1]), np.absolute(-28.7677)))), x[2]))), np.positive(x[2]))), np.sinh(x[0])), np.add(np.subtract(np.expm1(x[1]), x[1]), x[2]))
@@ -27,4 +27,4 @@ def f7(x: np.ndarray) -> np.ndarray:
 
 
 def f8(x: np.ndarray) -> np.ndarray:
-    raise Exception("not implemented")
+    return np.degrees(np.add(np.add(np.minimum(np.add(x[2], np.fmin(np.sinh(x[5]), x[0])), np.cos(x[5])), np.fmin(np.sinh(x[5]), np.add(np.expm1(x[5]), np.fmin(x[4], np.square(x[3]))))), np.add(np.add(np.expm1(x[5]), np.fmin(np.sinh(x[5]), x[3])), np.fmin(x[1], np.add(x[3], np.fmin(np.sinh(x[5]), x[4]))))))

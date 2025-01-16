@@ -13,7 +13,7 @@ OPERATOR_MUTATION_PROBABILITY = .4
 
 CONSTANT_PROBABILITY = .2
 
-MAX_TREE_SIZE = 12
+MAX_TREE_SIZE = 10
 
 class Symreg_gp:
     _operators: list[np.ufunc]
