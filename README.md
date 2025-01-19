@@ -40,3 +40,18 @@ If you have [Poetry](https://python-poetry.org/) installed on your pc, you can i
 ```shell
 poetry install # Install dependencies
 ```
+
+## Results
+
+Here's the results for the given dataset
+
+```
+1: 3.92119e-32
+2: 1.43075e+15
+3: 20232.1
+4: 38.2022
+5: 5.57281e-16
+6: 7.90409
+7: 35085.2
+8: 9.085e+07
+```
