@@ -1,5 +1,8 @@
 src/gp/__pycache__
 
+poetry.lock
+pyproject.toml
+
 result/
 
 __pycache__
