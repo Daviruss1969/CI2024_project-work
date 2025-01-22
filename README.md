@@ -33,14 +33,6 @@ tqdm = "^4.67.1"
 
 The version of numpy is important to get the numpy functions. Indeed, I discarded some functions so having a older version may result in function that don't exist and newer version may result in new invalid functions.
 
-### Poetry
-
-If you have [Poetry](https://python-poetry.org/) installed on your pc, you can install the dependencies with the following commands :
-
-```shell
-poetry install # Install dependencies
-```
-
 ## Results
 
 Here's the results for the given dataset
